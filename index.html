@@ -831,7 +831,7 @@
         emoji: '🧑‍🦲📉',
         title: '탈모 확률 계산기',
         subtitle: '과학적 알고리즘으로 정밀 분석합니다 (진짜임)',
-        footer1: '※ 본 서비스는 탈모 예측의 정확성을 99% 이상 보장합니다',
+        footer1: '※ 본 서비스는 탈모 예측의 정확성을 보장하지 않습니다',
         footer2: '머리 숱 많은 것이 최고의 해법입니다',
       },
       poker: {
@@ -1309,7 +1309,23 @@
     ];
 
     function getHairPercent() {
-      return (99 + Math.random() * 0.99).toFixed(1);
+      return Math.floor(Math.random() * 101);
+    }
+
+    function getHairVerdict(percent) {
+      const safe = [
+        '머리 숱 걱정은 안 하셔도 됩니다',
+        '아직 풍성합니다. 자신감 가지세요',
+        '탈모 샴푸 볼 필요 없습니다',
+      ];
+      const mid = [
+        '가끔 거울 보면서 확인하세요',
+        '씻을 때 빠지는 거 신경 쓰이시죠',
+        '모자 하나 장만해 두세요',
+      ];
+      if (percent <= 30) return safe[Math.floor(Math.random() * safe.length)];
+      if (percent <= 70) return mid[Math.floor(Math.random() * mid.length)];
+      return verdicts[Math.floor(Math.random() * verdicts.length)];
     }
 
     function calcHair() {
@@ -1340,7 +1356,7 @@
         clearInterval(scanInterval);
         clearInterval(progressInterval);
         const percent = getHairPercent();
-        const verdict = verdicts[Math.floor(Math.random() * verdicts.length)];
+        const verdict = getHairVerdict(percent);
         hairProgressFill.style.width = percent + '%';
         hairScan.textContent = '✅ 분석 완료 (오차범위 ±0.01%)';
 
