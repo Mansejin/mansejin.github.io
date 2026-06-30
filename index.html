@@ -6,8 +6,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="format-detection" content="telephone=no">
-  <title>지각 핑계 생성기 🏃‍♂️</title>
-  <meta name="description" content="오늘 지각했어? 걱정 마! 클릭 한 번으로 그럴듯한 핑계를 만들어드려요.">
+  <title>만세진 도구함 🏃‍♂️</title>
+  <meta name="description" content="지각 핑계 생성기 & 보승이 탈모 확률 계산기">
 
   <!-- 카카오톡 / SNS 공유용 -->
   <meta property="og:type" content="website">
@@ -308,6 +308,146 @@
       color: var(--muted);
       margin-top: 2px;
     }
+
+    .app-nav {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      max-width: 420px;
+      margin-bottom: 20px;
+      background: rgba(255,255,255,.04);
+      padding: 6px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .app-nav-btn {
+      flex: 1;
+      min-height: 44px;
+      padding: 10px 8px;
+      border: none;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .2s;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .app-nav-btn.active {
+      background: var(--card);
+      color: var(--text);
+      box-shadow: 0 2px 12px rgba(0,0,0,.3);
+    }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .form-field {
+      margin-bottom: 18px;
+    }
+
+    .form-field label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .form-field label span {
+      color: var(--accent2);
+      font-size: 0.8rem;
+    }
+
+    .form-field input[type="range"] {
+      width: 100%;
+      height: 6px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .form-field input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .hair-result-box {
+      background: rgba(255,255,255,.04);
+      border-radius: 16px;
+      padding: 24px 20px;
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border: 1px dashed rgba(255,255,255,.1);
+      transition: opacity .3s;
+    }
+
+    .hair-result-box.fade { opacity: 0; }
+
+    .hair-result-box .placeholder {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .hair-percent {
+      font-size: 3.2rem;
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(135deg, #ff6b4a, #ffd166);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hair-verdict {
+      margin-top: 12px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text);
+      word-break: keep-all;
+    }
+
+    .hair-scan {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      min-height: 1.2em;
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,.06);
+      border-radius: 99px;
+      margin-top: 16px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .progress-bar-wrap.show { display: block; }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 99px;
+      transition: width .08s linear;
+    }
   </style>
 </head>
 <body>
@@ -317,13 +457,18 @@
     <strong>사파리·크롬</strong>에서 열거나, 웹에 올린 링크로 접속하세요.
   </div>
 
-  <header>
-    <div class="emoji-hero">🏃‍♂️💨</div>
-    <h1>지각 핑계 생성기</h1>
-    <p class="subtitle">오늘도 늦었어? 괜찮아, 핑계는 내가 만들어줄게</p>
+  <nav class="app-nav" id="appNav">
+    <button type="button" class="app-nav-btn active" data-app="excuse">🏃 핑계 생성기</button>
+    <button type="button" class="app-nav-btn" data-app="hair">🧑‍🦲 탈모 계산기</button>
+  </nav>
+
+  <header id="appHeader">
+    <div class="emoji-hero" id="headerEmoji">🏃‍♂️💨</div>
+    <h1 id="headerTitle">지각 핑계 생성기</h1>
+    <p class="subtitle" id="headerSubtitle">오늘도 늦었어? 괜찮아, 핑계는 내가 만들어줄게</p>
   </header>
 
-  <main class="card">
+  <main class="card panel active" id="panelExcuse">
     <p class="section-label">어떤 상황이에요?</p>
     <div class="tabs-row" id="situationTabs">
       <button type="button" class="tab situation-tab active" data-situation="work">💼 회사 지각</button>
@@ -363,9 +508,57 @@
     </div>
   </main>
 
-  <footer>
-    <p>※ 본 서비스는 핑계의 진실성을 보장하지 않습니다 😇</p>
-    <p>지각하지 않는 것이 최고의 핑계입니다</p>
+  <main class="card panel" id="panelHair">
+    <p class="section-label">대상자 정보</p>
+    <div class="form-field">
+      <label for="hairName">이름</label>
+      <input type="text" id="hairName" value="보승" maxlength="20" placeholder="이름 입력">
+    </div>
+
+    <div class="form-field">
+      <label for="hairAge">나이 <span id="hairAgeVal">27세</span></label>
+      <input type="range" id="hairAge" min="1" max="80" value="27">
+    </div>
+
+    <div class="form-field">
+      <label for="hairStress">스트레스 <span id="hairStressVal">보통</span></label>
+      <input type="range" id="hairStress" min="0" max="100" value="50">
+    </div>
+
+    <div class="form-field">
+      <label for="hairCoffee">하루 커피 <span id="hairCoffeeVal">2잔</span></label>
+      <input type="range" id="hairCoffee" min="0" max="10" value="2">
+    </div>
+
+    <div class="form-field">
+      <label for="hairSleep">수면 시간 <span id="hairSleepVal">6시간</span></label>
+      <input type="range" id="hairSleep" min="0" max="12" value="6">
+    </div>
+
+    <div class="form-field">
+      <label for="hairGenetics">가족 탈모 유전력 <span id="hairGeneticsVal">없음</span></label>
+      <input type="range" id="hairGenetics" min="0" max="100" value="0">
+    </div>
+
+    <div class="hair-result-box" id="hairResultBox">
+      <span class="placeholder">아래 버튼을 눌러 과학적으로 분석하세요</span>
+    </div>
+
+    <div class="progress-bar-wrap" id="hairProgressWrap">
+      <div class="progress-bar-fill" id="hairProgressFill"></div>
+    </div>
+    <p class="hair-scan" id="hairScan"></p>
+
+    <div class="btn-group">
+      <button type="button" class="btn btn-primary" id="hairCalcBtn">🔬 탈모 확률 분석하기</button>
+      <button type="button" class="btn btn-secondary" id="hairCopyBtn" style="display:none">📋 결과 복사하기</button>
+      <button type="button" class="btn btn-share" id="hairShareBtn">💬 보승이한테 공유하기</button>
+    </div>
+  </main>
+
+  <footer id="appFooter">
+    <p id="footerLine1">※ 본 서비스는 핑계의 진실성을 보장하지 않습니다 😇</p>
+    <p id="footerLine2">지각하지 않는 것이 최고의 핑계입니다</p>
   </footer>
 
   <div class="toast" id="toast"></div>
@@ -381,6 +574,49 @@
     if (location.protocol === 'file:') {
       document.getElementById('fileWarning').classList.add('show');
     }
+
+    const appMeta = {
+      excuse: {
+        emoji: '🏃‍♂️💨',
+        title: '지각 핑계 생성기',
+        subtitle: '오늘도 늦었어? 괜찮아, 핑계는 내가 만들어줄게',
+        footer1: '※ 본 서비스는 핑계의 진실성을 보장하지 않습니다 😇',
+        footer2: '지각하지 않는 것이 최고의 핑계입니다',
+      },
+      hair: {
+        emoji: '🧑‍🦲📉',
+        title: '보승이 탈모 확률 계산기',
+        subtitle: '과학적 알고리즘으로 정밀 분석합니다 (진짜임)',
+        footer1: '※ 본 서비스는 탈모 예측의 정확성을 99% 이상 보장합니다',
+        footer2: '머리 숱 많은 것이 최고의 해법입니다 (보승이는 해당 없음)',
+      },
+    };
+
+    let currentApp = 'excuse';
+
+    function switchApp(app) {
+      currentApp = app;
+      document.querySelectorAll('.app-nav-btn').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.app === app);
+      });
+      document.querySelectorAll('.panel').forEach((panel) => {
+        panel.classList.toggle('active', panel.id === 'panel' + app.charAt(0).toUpperCase() + app.slice(1));
+      });
+      const meta = appMeta[app];
+      document.getElementById('headerEmoji').textContent = meta.emoji;
+      document.getElementById('headerTitle').textContent = meta.title;
+      document.getElementById('headerSubtitle').textContent = meta.subtitle;
+      document.getElementById('footerLine1').textContent = meta.footer1;
+      document.getElementById('footerLine2').textContent = meta.footer2;
+    }
+
+    document.getElementById('appNav').addEventListener('click', (e) => {
+      const btn = e.target.closest('.app-nav-btn');
+      if (btn) switchApp(btn.dataset.app);
+    });
+
+    const params = new URLSearchParams(location.search);
+    if (params.get('app') === 'hair') switchApp('hair');
 
     const situations = {
       work: {
@@ -687,8 +923,134 @@
     bindTap(document.getElementById('shareBtn'), share);
     bindTap(excuseBox, copyExcuse);
 
+    // ── 보승이 탈모 확률 계산기 ──
+    const hairAge = document.getElementById('hairAge');
+    const hairStress = document.getElementById('hairStress');
+    const hairCoffee = document.getElementById('hairCoffee');
+    const hairSleep = document.getElementById('hairSleep');
+    const hairGenetics = document.getElementById('hairGenetics');
+    const hairResultBox = document.getElementById('hairResultBox');
+    const hairProgressWrap = document.getElementById('hairProgressWrap');
+    const hairProgressFill = document.getElementById('hairProgressFill');
+    const hairScan = document.getElementById('hairScan');
+    const hairCopyBtn = document.getElementById('hairCopyBtn');
+    let hairResultText = '';
+
+    const stressLabels = ['없음', '약간', '보통', '심함', '지옥'];
+    const geneticsLabels = ['없음', '살짝', '보통', '강함', '치명적'];
+
+    function updateHairLabels() {
+      document.getElementById('hairAgeVal').textContent = hairAge.value + '세';
+      const s = +hairStress.value;
+      document.getElementById('hairStressVal').textContent = stressLabels[Math.min(4, Math.floor(s / 25))];
+      document.getElementById('hairCoffeeVal').textContent = hairCoffee.value + '잔';
+      document.getElementById('hairSleepVal').textContent = hairSleep.value + '시간';
+      const g = +hairGenetics.value;
+      document.getElementById('hairGeneticsVal').textContent = geneticsLabels[Math.min(4, Math.floor(g / 25))];
+    }
+
+    [hairAge, hairStress, hairCoffee, hairSleep, hairGenetics].forEach((el) => {
+      el.addEventListener('input', updateHairLabels);
+    });
+    updateHairLabels();
+
+    const scanSteps = [
+      '모낭 밀도 스캔 중...',
+      'DHT 호르몬 수치 분석 중...',
+      '정수리 위성 사진 로딩 중...',
+      '보승이 DNA 시퀀싱 중...',
+      '탈모 유전자 17번 염색체 확인 중...',
+      '최종 결과 산출 중...',
+    ];
+
+    const verdicts = [
+      '이마 라인이 후퇴할 준비를 마쳤습니다',
+      '미래의 보승이가 대머리를 쓰고 계십니다',
+      '샴푸 광고 모델은 포기하세요',
+      '모자 업계에 희소식입니다',
+      '정수리에 바람이 통할 예정입니다',
+      '탈모 샴푸 주식 매수를 권장합니다',
+      '머리카락 한 올 한 올이 이별 통보 중입니다',
+      '미용실에서 "숱이 좀..." 소리 들을 각입니다',
+    ];
+
+    function getHairPercent() {
+      return (99 + Math.random() * 0.99).toFixed(1);
+    }
+
+    function calcHair() {
+      const name = document.getElementById('hairName').value.trim() || '보승';
+      const btn = document.getElementById('hairCalcBtn');
+      btn.disabled = true;
+      hairCopyBtn.style.display = 'none';
+      hairProgressWrap.classList.add('show');
+      hairProgressFill.style.width = '0%';
+      hairResultBox.classList.add('fade');
+      hairResultBox.innerHTML = '<span class="placeholder">분석 중...</span>';
+
+      let step = 0;
+      hairScan.textContent = scanSteps[0];
+
+      const scanInterval = setInterval(() => {
+        step++;
+        if (step < scanSteps.length) hairScan.textContent = scanSteps[step];
+      }, 400);
+
+      let progress = 0;
+      const progressInterval = setInterval(() => {
+        progress = Math.min(99, progress + Math.random() * 12 + 3);
+        hairProgressFill.style.width = progress + '%';
+      }, 120);
+
+      setTimeout(() => {
+        clearInterval(scanInterval);
+        clearInterval(progressInterval);
+        const percent = getHairPercent();
+        const verdict = verdicts[Math.floor(Math.random() * verdicts.length)];
+        hairProgressFill.style.width = percent + '%';
+        hairScan.textContent = '✅ 분석 완료 (오차범위 ±0.01%)';
+
+        hairResultText = `${name}님 탈모 확률: ${percent}%\n${verdict}\n\n보승이 탈모 확률 계산기 👇`;
+        hairResultBox.innerHTML = `<div class="hair-percent">${percent}%</div><div class="hair-verdict"><strong>${name}</strong>님의 탈모 확률: <strong>${percent}%</strong><br><span style="color:var(--muted);font-size:0.85rem">${verdict}</span></div>`;
+        hairResultBox.classList.remove('fade');
+        hairCopyBtn.style.display = 'block';
+        btn.disabled = false;
+      }, 2800);
+    }
+
+    function copyHairResult() {
+      if (!hairResultText) return;
+      const url = location.protocol === 'file:' ? '' : location.origin + location.pathname + '?app=hair';
+      const text = url ? hairResultText + '\n' + url : hairResultText;
+      copyToClipboard(text).then((ok) => {
+        showToast(ok ? '📋 복사 완료! 보승이한테 보내세요' : '📋 길게 눌러서 복사해 주세요');
+      });
+    }
+
+    function shareHair() {
+      const name = document.getElementById('hairName').value.trim() || '보승';
+      const text = hairResultText
+        ? hairResultText
+        : `${name}님 탈모 확률 측정해봤는데 ㅋㅋㅋ 너도 해봐`;
+      const url = location.protocol === 'file:' ? '' : location.origin + location.pathname + '?app=hair';
+      const shareText = url ? text + '\n' + url : text;
+
+      if (navigator.share) {
+        navigator.share({ title: '보승이 탈모 확률 계산기 🧑‍🦲', text: shareText }).catch((e) => {
+          if (e.name !== 'AbortError') copyToClipboard(shareText).then(() => showToast('📋 복사됨! 카톡에 붙여넣기 하세요'));
+        });
+        return;
+      }
+      copyToClipboard(shareText).then((ok) => {
+        showToast(ok ? '📋 복사됨! 카톡에 붙여넣기 하세요' : shareText);
+      });
+    }
+
+    bindTap(document.getElementById('hairCalcBtn'), calcHair);
+    bindTap(hairCopyBtn, copyHairResult);
+    bindTap(document.getElementById('hairShareBtn'), shareHair);
+
     // URL에 핑계가 있으면 표시 (공유 링크용)
-    const params = new URLSearchParams(location.search);
     const shared = params.get('e');
     if (shared) {
       try {
