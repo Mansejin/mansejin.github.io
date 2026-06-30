@@ -653,6 +653,69 @@
       flex-direction: column;
       align-items: center;
     }
+
+    .hair-admin {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px dashed rgba(255,107,74,.25);
+    }
+
+    .hair-admin[hidden] { display: none !important; }
+
+    .hair-vip-list {
+      list-style: none;
+      margin-bottom: 12px;
+    }
+
+    .hair-vip-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      background: rgba(255,107,74,.08);
+      border-radius: 10px;
+      font-size: 0.9rem;
+    }
+
+    .hair-vip-del {
+      border: none;
+      background: rgba(255,255,255,.08);
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .hair-admin-add {
+      display: flex;
+      gap: 8px;
+    }
+
+    .hair-admin-add input {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+
+    .hair-admin-add button {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      font-family: inherit;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -760,6 +823,15 @@
       <button type="button" class="btn btn-primary" id="hairCalcBtn">🔬 탈모 확률 분석하기</button>
       <button type="button" class="btn btn-secondary" id="hairCopyBtn" style="display:none">📋 결과 복사하기</button>
       <button type="button" class="btn btn-share" id="hairShareBtn">📸 캡처해서 공유하기</button>
+    </div>
+
+    <div id="hairAdmin" class="hair-admin no-capture" hidden>
+      <p class="section-label">🔒 확정 탈모 명단 (비공개)</p>
+      <ul class="hair-vip-list" id="hairVipList"></ul>
+      <div class="hair-admin-add">
+        <input type="text" id="hairVipInput" maxlength="20" placeholder="이름 추가">
+        <button type="button" id="hairVipAddBtn">추가</button>
+      </div>
     </div>
   </main>
 
@@ -1270,6 +1342,94 @@
     const hairCopyBtn = document.getElementById('hairCopyBtn');
     let hairResultText = '';
 
+    const HAIR_VIP_KEY = '_m_hv';
+    const HAIR_ADMIN_KEY = '_m_ha';
+    const DEFAULT_VIP = ['강성민', '심성우', '송준오'];
+    const VIP_VERDICTS = [
+      '이미 탈모로 판명났습니다. 재검사 불필요.',
+      '공인 탈모로 데이터베이스에 등록되어 있습니다.',
+      '과학이 포기한 케이스입니다.',
+      '머리카락은 이미 역사가 되었습니다.',
+    ];
+
+    function normHairName(s) {
+      return s.trim().replace(/\s/g, '');
+    }
+
+    function getVipList() {
+      try {
+        const raw = localStorage.getItem(HAIR_VIP_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch {}
+      saveVipList(DEFAULT_VIP);
+      return DEFAULT_VIP.slice();
+    }
+
+    function saveVipList(list) {
+      localStorage.setItem(HAIR_VIP_KEY, JSON.stringify(list));
+    }
+
+    function isVipName(name) {
+      const n = normHairName(name);
+      if (!n || n === '당신') return false;
+      return getVipList().some((x) => normHairName(x) === n);
+    }
+
+    function renderVipAdmin() {
+      const ul = document.getElementById('hairVipList');
+      const list = getVipList();
+      ul.innerHTML = list.map((name, i) =>
+        `<li class="hair-vip-item"><span>${name}</span><button type="button" class="hair-vip-del" data-idx="${i}">삭제</button></li>`
+      ).join('');
+    }
+
+    function showHairAdmin() {
+      sessionStorage.setItem(HAIR_ADMIN_KEY, '1');
+      const el = document.getElementById('hairAdmin');
+      el.hidden = false;
+      renderVipAdmin();
+    }
+
+    if (params.get('admin') === 'hair' || sessionStorage.getItem(HAIR_ADMIN_KEY)) {
+      showHairAdmin();
+    }
+
+    let emojiTaps = 0;
+    let emojiTapTimer = null;
+    document.getElementById('headerEmoji').addEventListener('click', () => {
+      if (currentApp !== 'hair') return;
+      emojiTaps++;
+      clearTimeout(emojiTapTimer);
+      emojiTapTimer = setTimeout(() => { emojiTaps = 0; }, 2000);
+      if (emojiTaps >= 5) {
+        emojiTaps = 0;
+        showHairAdmin();
+        showToast('🔒 관리 패널 열림');
+      }
+    });
+
+    document.getElementById('hairVipList').addEventListener('click', (e) => {
+      const btn = e.target.closest('.hair-vip-del');
+      if (!btn) return;
+      const list = getVipList();
+      list.splice(+btn.dataset.idx, 1);
+      saveVipList(list);
+      renderVipAdmin();
+    });
+
+    document.getElementById('hairVipAddBtn').addEventListener('click', () => {
+      const input = document.getElementById('hairVipInput');
+      const name = input.value.trim();
+      if (!name) return;
+      const list = getVipList();
+      if (!list.some((x) => normHairName(x) === normHairName(name))) {
+        list.push(name);
+        saveVipList(list);
+      }
+      input.value = '';
+      renderVipAdmin();
+    });
+
     const stressLabels = ['없음', '약간', '보통', '심함', '지옥'];
     const geneticsLabels = ['없음', '살짝', '보통', '강함', '치명적'];
 
@@ -1330,6 +1490,7 @@
 
     function calcHair() {
       const name = document.getElementById('hairName').value.trim() || '당신';
+      const isVip = isVipName(name);
       const btn = document.getElementById('hairCalcBtn');
       btn.disabled = true;
       hairCopyBtn.style.display = 'none';
@@ -1355,10 +1516,12 @@
       setTimeout(() => {
         clearInterval(scanInterval);
         clearInterval(progressInterval);
-        const percent = getHairPercent();
-        const verdict = getHairVerdict(percent);
+        const percent = isVip ? 100 : getHairPercent();
+        const verdict = isVip
+          ? VIP_VERDICTS[Math.floor(Math.random() * VIP_VERDICTS.length)]
+          : getHairVerdict(percent);
         hairProgressFill.style.width = percent + '%';
-        hairScan.textContent = '✅ 분석 완료 (오차범위 ±0.01%)';
+        hairScan.textContent = isVip ? '✅ 확정 탈모 (재검사 불필요)' : '✅ 분석 완료 (오차범위 ±0.01%)';
 
         hairResultText = `${name}님 탈모 확률: ${percent}%\n${verdict}\n\n탈모 확률 계산기 👇`;
         hairResultBox.innerHTML = `<div class="hair-percent">${percent}%</div><div class="hair-verdict"><strong>${name}</strong>님의 탈모 확률: <strong>${percent}%</strong><br><span style="color:var(--muted);font-size:0.85rem">${verdict}</span></div>`;
