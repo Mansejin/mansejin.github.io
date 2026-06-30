@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="format-detection" content="telephone=no">
   <title>만세진 도구함 🏃‍♂️</title>
-  <meta name="description" content="지각 핑계 생성기 & 보승이 탈모 확률 계산기">
+  <meta name="description" content="지각 핑계 생성기 · 탈모 확률 계산기 · 콜 할까 말까?">
 
   <!-- 카카오톡 / SNS 공유용 -->
   <meta property="og:type" content="website">
@@ -36,12 +36,14 @@
 
     html {
       -webkit-text-size-adjust: 100%;
-      height: 100%;
+      min-height: 100%;
+      min-height: 100dvh;
+      background: var(--bg);
     }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
-      background: var(--bg);
+      background: transparent;
       color: var(--text);
       min-height: 100%;
       min-height: 100vh;
@@ -54,9 +56,20 @@
       overflow-x: hidden;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-color: var(--bg);
       background-image:
-        radial-gradient(ellipse at 20% 0%, rgba(255,107,74,.15) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 100%, rgba(255,209,102,.1) 0%, transparent 60%);
+        radial-gradient(ellipse 120% 80% at 20% 0%, rgba(255,107,74,.18) 0%, transparent 55%),
+        radial-gradient(ellipse 120% 80% at 80% 100%, rgba(255,209,102,.12) 0%, transparent 55%),
+        radial-gradient(ellipse 80% 50% at 50% 50%, rgba(100,180,255,.04) 0%, transparent 70%);
+      pointer-events: none;
     }
 
     header {
@@ -311,7 +324,7 @@
 
     .app-nav {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       width: 100%;
       max-width: 420px;
       margin-bottom: 20px;
@@ -323,19 +336,21 @@
 
     .app-nav-btn {
       flex: 1;
+      min-width: 0;
       min-height: 44px;
-      padding: 10px 8px;
+      padding: 10px 4px;
       border: none;
       border-radius: 12px;
       background: transparent;
       color: var(--muted);
-      font-size: 0.82rem;
+      font-size: 0.72rem;
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
       transition: all .2s;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
+      white-space: nowrap;
     }
 
     .app-nav-btn.active {
@@ -448,6 +463,121 @@
       border-radius: 99px;
       transition: width .08s linear;
     }
+
+    .quiz-progress {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .quiz-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .quiz-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.12);
+      transition: background .2s, transform .2s;
+    }
+
+    .quiz-dot.done { background: var(--accent2); }
+    .quiz-dot.current { background: var(--accent); transform: scale(1.25); }
+
+    .quiz-question-box {
+      background: rgba(255,255,255,.04);
+      border-radius: 16px;
+      padding: 28px 20px;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 1.05rem;
+      line-height: 1.65;
+      font-weight: 600;
+      border: 1px dashed rgba(255,255,255,.1);
+      word-break: keep-all;
+      margin-bottom: 16px;
+    }
+
+    .yn-btns {
+      display: flex;
+      gap: 10px;
+    }
+
+    .yn-btn {
+      flex: 1;
+      min-height: 56px;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .15s;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .yn-btn:active { transform: scale(.97); }
+
+    .yn-btn.yes:hover, .yn-btn.yes:active {
+      background: rgba(255,107,74,.2);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .yn-btn.no:hover, .yn-btn.no:active {
+      background: rgba(100,220,130,.15);
+      border-color: #64dc82;
+      color: #64dc82;
+    }
+
+    .poker-result-box {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .poker-verdict {
+      font-size: 2.8rem;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -1px;
+    }
+
+    .poker-verdict.call {
+      color: #64dc82;
+      text-shadow: 0 0 40px rgba(100,220,130,.35);
+    }
+
+    .poker-verdict.fold {
+      color: #ff6b4a;
+      text-shadow: 0 0 40px rgba(255,107,74,.35);
+    }
+
+    .poker-reason {
+      margin-top: 14px;
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--muted);
+      word-break: keep-all;
+    }
+
+    .poker-score {
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
   </style>
 </head>
 <body>
@@ -458,8 +588,9 @@
   </div>
 
   <nav class="app-nav" id="appNav">
-    <button type="button" class="app-nav-btn active" data-app="excuse">🏃 핑계 생성기</button>
-    <button type="button" class="app-nav-btn" data-app="hair">🧑‍🦲 탈모 계산기</button>
+    <button type="button" class="app-nav-btn active" data-app="excuse">🏃 핑계</button>
+    <button type="button" class="app-nav-btn" data-app="hair">🧑‍🦲 탈모</button>
+    <button type="button" class="app-nav-btn" data-app="poker">🃏 콜말콜</button>
   </nav>
 
   <header id="appHeader">
@@ -512,7 +643,7 @@
     <p class="section-label">대상자 정보</p>
     <div class="form-field">
       <label for="hairName">이름</label>
-      <input type="text" id="hairName" value="보승" maxlength="20" placeholder="이름 입력">
+      <input type="text" id="hairName" value="" maxlength="20" placeholder="이름 입력 (선택)">
     </div>
 
     <div class="form-field">
@@ -552,7 +683,34 @@
     <div class="btn-group">
       <button type="button" class="btn btn-primary" id="hairCalcBtn">🔬 탈모 확률 분석하기</button>
       <button type="button" class="btn btn-secondary" id="hairCopyBtn" style="display:none">📋 결과 복사하기</button>
-      <button type="button" class="btn btn-share" id="hairShareBtn">💬 보승이한테 공유하기</button>
+      <button type="button" class="btn btn-share" id="hairShareBtn">💬 결과 공유하기</button>
+    </div>
+  </main>
+
+  <main class="card panel" id="panelPoker">
+    <div id="pokerQuiz">
+      <div class="quiz-progress">
+        <span id="pokerStepLabel">질문 1 / 5</span>
+        <div class="quiz-dots" id="pokerDots"></div>
+      </div>
+      <div class="quiz-question-box" id="pokerQuestion"></div>
+      <div class="yn-btns">
+        <button type="button" class="yn-btn yes" id="pokerYes">예 😰</button>
+        <button type="button" class="yn-btn no" id="pokerNo">아니오 😎</button>
+      </div>
+    </div>
+
+    <div id="pokerResult" style="display:none">
+      <div class="poker-result-box">
+        <div class="poker-verdict" id="pokerVerdict"></div>
+        <p class="poker-reason" id="pokerReason"></p>
+        <p class="poker-score" id="pokerScore"></p>
+      </div>
+      <div class="btn-group">
+        <button type="button" class="btn btn-secondary" id="pokerCopyBtn">📋 결과 복사하기</button>
+        <button type="button" class="btn btn-share" id="pokerShareBtn">💬 톡방에 공유하기</button>
+        <button type="button" class="btn btn-primary" id="pokerRetryBtn">🔄 다시 판단하기</button>
+      </div>
     </div>
   </main>
 
@@ -575,6 +733,8 @@
       document.getElementById('fileWarning').classList.add('show');
     }
 
+    const panelMap = { excuse: 'panelExcuse', hair: 'panelHair', poker: 'panelPoker' };
+
     const appMeta = {
       excuse: {
         emoji: '🏃‍♂️💨',
@@ -585,22 +745,30 @@
       },
       hair: {
         emoji: '🧑‍🦲📉',
-        title: '보승이 탈모 확률 계산기',
+        title: '탈모 확률 계산기',
         subtitle: '과학적 알고리즘으로 정밀 분석합니다 (진짜임)',
         footer1: '※ 본 서비스는 탈모 예측의 정확성을 99% 이상 보장합니다',
-        footer2: '머리 숱 많은 것이 최고의 해법입니다 (보승이는 해당 없음)',
+        footer2: '머리 숱 많은 것이 최고의 해법입니다',
+      },
+      poker: {
+        emoji: '🃏🤔',
+        title: '콜 할까 말까?',
+        subtitle: '홀덤 톡방 전용 의사결정 도우미 (책임 안 짐)',
+        footer1: '※ 본 서비스는 패배에 대한 책임을 지지 않습니다',
+        footer2: '폴드가 최고의 핸드일 때가 있습니다',
       },
     };
 
     let currentApp = 'excuse';
 
     function switchApp(app) {
+      if (!appMeta[app]) return;
       currentApp = app;
       document.querySelectorAll('.app-nav-btn').forEach((btn) => {
         btn.classList.toggle('active', btn.dataset.app === app);
       });
       document.querySelectorAll('.panel').forEach((panel) => {
-        panel.classList.toggle('active', panel.id === 'panel' + app.charAt(0).toUpperCase() + app.slice(1));
+        panel.classList.toggle('active', panel.id === panelMap[app]);
       });
       const meta = appMeta[app];
       document.getElementById('headerEmoji').textContent = meta.emoji;
@@ -616,7 +784,8 @@
     });
 
     const params = new URLSearchParams(location.search);
-    if (params.get('app') === 'hair') switchApp('hair');
+    const appParam = params.get('app');
+    if (appParam && appMeta[appParam]) switchApp(appParam);
 
     const situations = {
       work: {
@@ -923,7 +1092,7 @@
     bindTap(document.getElementById('shareBtn'), share);
     bindTap(excuseBox, copyExcuse);
 
-    // ── 보승이 탈모 확률 계산기 ──
+    // ── 탈모 확률 계산기 ──
     const hairAge = document.getElementById('hairAge');
     const hairStress = document.getElementById('hairStress');
     const hairCoffee = document.getElementById('hairCoffee');
@@ -958,14 +1127,14 @@
       '모낭 밀도 스캔 중...',
       'DHT 호르몬 수치 분석 중...',
       '정수리 위성 사진 로딩 중...',
-      '보승이 DNA 시퀀싱 중...',
+      '두피 DNA 시퀀싱 중...',
       '탈모 유전자 17번 염색체 확인 중...',
       '최종 결과 산출 중...',
     ];
 
     const verdicts = [
       '이마 라인이 후퇴할 준비를 마쳤습니다',
-      '미래의 보승이가 대머리를 쓰고 계십니다',
+      '미래의 당신이 대머리를 쓰고 계십니다',
       '샴푸 광고 모델은 포기하세요',
       '모자 업계에 희소식입니다',
       '정수리에 바람이 통할 예정입니다',
@@ -979,7 +1148,7 @@
     }
 
     function calcHair() {
-      const name = document.getElementById('hairName').value.trim() || '보승';
+      const name = document.getElementById('hairName').value.trim() || '당신';
       const btn = document.getElementById('hairCalcBtn');
       btn.disabled = true;
       hairCopyBtn.style.display = 'none';
@@ -1010,7 +1179,7 @@
         hairProgressFill.style.width = percent + '%';
         hairScan.textContent = '✅ 분석 완료 (오차범위 ±0.01%)';
 
-        hairResultText = `${name}님 탈모 확률: ${percent}%\n${verdict}\n\n보승이 탈모 확률 계산기 👇`;
+        hairResultText = `${name}님 탈모 확률: ${percent}%\n${verdict}\n\n탈모 확률 계산기 👇`;
         hairResultBox.innerHTML = `<div class="hair-percent">${percent}%</div><div class="hair-verdict"><strong>${name}</strong>님의 탈모 확률: <strong>${percent}%</strong><br><span style="color:var(--muted);font-size:0.85rem">${verdict}</span></div>`;
         hairResultBox.classList.remove('fade');
         hairCopyBtn.style.display = 'block';
@@ -1023,12 +1192,12 @@
       const url = location.protocol === 'file:' ? '' : location.origin + location.pathname + '?app=hair';
       const text = url ? hairResultText + '\n' + url : hairResultText;
       copyToClipboard(text).then((ok) => {
-        showToast(ok ? '📋 복사 완료! 보승이한테 보내세요' : '📋 길게 눌러서 복사해 주세요');
+        showToast(ok ? '📋 복사 완료!' : '📋 길게 눌러서 복사해 주세요');
       });
     }
 
     function shareHair() {
-      const name = document.getElementById('hairName').value.trim() || '보승';
+      const name = document.getElementById('hairName').value.trim() || '당신';
       const text = hairResultText
         ? hairResultText
         : `${name}님 탈모 확률 측정해봤는데 ㅋㅋㅋ 너도 해봐`;
@@ -1036,7 +1205,7 @@
       const shareText = url ? text + '\n' + url : text;
 
       if (navigator.share) {
-        navigator.share({ title: '보승이 탈모 확률 계산기 🧑‍🦲', text: shareText }).catch((e) => {
+        navigator.share({ title: '탈모 확률 계산기 🧑‍🦲', text: shareText }).catch((e) => {
           if (e.name !== 'AbortError') copyToClipboard(shareText).then(() => showToast('📋 복사됨! 카톡에 붙여넣기 하세요'));
         });
         return;
@@ -1049,6 +1218,129 @@
     bindTap(document.getElementById('hairCalcBtn'), calcHair);
     bindTap(hairCopyBtn, copyHairResult);
     bindTap(document.getElementById('hairShareBtn'), shareHair);
+
+    // ── 콜 할까 말까? ──
+    const pokerQuestions = [
+      '상대방이 오늘따라 의심스럽습니까?',
+      '레이즈 타이밍이 평소와 다릅니까?',
+      '보드 텍스처가 상대 핸드랑 잘 맞아 보입니까?',
+      '팟 사이즈 대비 베팅이 과하게 큽니까?',
+      '상대가 평소보다 말이 많거나 적습니까?',
+    ];
+
+    const callReasons = [
+      '상대가 블러핑일 확률 127%입니다 (수학적으로)',
+      '이 팟, 안 가져가면 평생 후회합니다',
+      '콜 한 번이면 인생이 바뀝니다 (아마)',
+      '상대도 떨고 있을 겁니다. 당당하게 가세요',
+      '오늘은 운이 당신 편입니다. probably',
+      '핸드레인지가 넓다면 콜이 정답입니다',
+    ];
+
+    const foldReasons = [
+      '상대 눈빛이 너무 편안합니다. 핸드 있음',
+      '이 보드에서 콜하면 지갑이 울 겁니다',
+      '폴드가 실력입니다. 오늘은 접으세요',
+      '상대가 웃고 있습니다. 그건 좋은 신호가 아닙니다',
+      '의심 포인트가 너무 많습니다. 다음 기회에',
+      '톡방에 "콜?" 올리기 전에 이미 답은 폴드입니다',
+    ];
+
+    let pokerStep = 0;
+    let pokerSuspicion = 0;
+    let pokerResultText = '';
+
+    const pokerQuiz = document.getElementById('pokerQuiz');
+    const pokerResult = document.getElementById('pokerResult');
+    const pokerQuestion = document.getElementById('pokerQuestion');
+    const pokerDots = document.getElementById('pokerDots');
+    const pokerStepLabel = document.getElementById('pokerStepLabel');
+
+    function renderPokerDots() {
+      pokerDots.innerHTML = pokerQuestions.map((_, i) => {
+        let cls = 'quiz-dot';
+        if (i < pokerStep) cls += ' done';
+        else if (i === pokerStep) cls += ' current';
+        return `<span class="${cls}"></span>`;
+      }).join('');
+    }
+
+    function showPokerQuestion() {
+      pokerQuiz.style.display = 'block';
+      pokerResult.style.display = 'none';
+      pokerQuestion.textContent = pokerQuestions[pokerStep];
+      pokerStepLabel.textContent = `질문 ${pokerStep + 1} / ${pokerQuestions.length}`;
+      renderPokerDots();
+    }
+
+    function answerPoker(suspicious) {
+      if (suspicious) pokerSuspicion++;
+      pokerStep++;
+      if (pokerStep < pokerQuestions.length) {
+        showPokerQuestion();
+        return;
+      }
+      showPokerVerdict();
+    }
+
+    function showPokerVerdict() {
+      const fold = pokerSuspicion >= 3;
+      const verdict = fold ? 'FOLD 🙅' : 'CALL ✅';
+      const reasons = fold ? foldReasons : callReasons;
+      const reason = reasons[Math.floor(Math.random() * reasons.length)];
+      const verdictEl = document.getElementById('pokerVerdict');
+      const cls = fold ? 'fold' : 'call';
+
+      verdictEl.textContent = verdict;
+      verdictEl.className = 'poker-verdict ' + cls;
+      document.getElementById('pokerReason').textContent = reason;
+      document.getElementById('pokerScore').textContent =
+        `의심 지수 ${pokerSuspicion} / ${pokerQuestions.length} · ${fold ? '폴드 권장' : '콜 권장'}`;
+
+      pokerResultText = `[콜 할까 말까?]\n결과: ${verdict}\n${reason}\n(의심 지수 ${pokerSuspicion}/${pokerQuestions.length})`;
+
+      pokerQuiz.style.display = 'none';
+      pokerResult.style.display = 'block';
+    }
+
+    function resetPoker() {
+      pokerStep = 0;
+      pokerSuspicion = 0;
+      pokerResultText = '';
+      showPokerQuestion();
+    }
+
+    function copyPokerResult() {
+      if (!pokerResultText) return;
+      const url = location.protocol === 'file:' ? '' : location.origin + location.pathname + '?app=poker';
+      const text = url ? pokerResultText + '\n' + url : pokerResultText;
+      copyToClipboard(text).then((ok) => {
+        showToast(ok ? '📋 복사 완료! 톡방에 붙여넣기 하세요' : '📋 길게 눌러서 복사해 주세요');
+      });
+    }
+
+    function sharePoker() {
+      const text = pokerResultText || '홀덤 톡방용 콜/폴드 결정기 발견 ㅋㅋ';
+      const url = location.protocol === 'file:' ? '' : location.origin + location.pathname + '?app=poker';
+      const shareText = url ? text + '\n' + url : text;
+
+      if (navigator.share) {
+        navigator.share({ title: '콜 할까 말까? 🃏', text: shareText }).catch((e) => {
+          if (e.name !== 'AbortError') copyToClipboard(shareText).then(() => showToast('📋 복사됨! 톡방에 붙여넣기 하세요'));
+        });
+        return;
+      }
+      copyToClipboard(shareText).then((ok) => {
+        showToast(ok ? '📋 복사됨! 톡방에 붙여넣기 하세요' : shareText);
+      });
+    }
+
+    resetPoker();
+    bindTap(document.getElementById('pokerYes'), () => answerPoker(true));
+    bindTap(document.getElementById('pokerNo'), () => answerPoker(false));
+    bindTap(document.getElementById('pokerRetryBtn'), resetPoker);
+    bindTap(document.getElementById('pokerCopyBtn'), copyPokerResult);
+    bindTap(document.getElementById('pokerShareBtn'), sharePoker);
 
     // URL에 핑계가 있으면 표시 (공유 링크용)
     const shared = params.get('e');
