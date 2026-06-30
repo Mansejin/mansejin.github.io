@@ -578,6 +578,81 @@
       font-size: 0.8rem;
       color: var(--muted);
     }
+
+    .poker-timer {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .poker-timer-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    .poker-timer-display {
+      font-size: 3.5rem;
+      font-weight: 900;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      color: var(--accent2);
+      transition: color .2s, transform .2s;
+    }
+
+    .poker-timer.urgent .poker-timer-display {
+      color: var(--accent);
+      animation: timer-pulse .5s ease-in-out infinite;
+    }
+
+    .poker-timer.critical .poker-timer-display {
+      color: #ff3b3b;
+      animation: timer-shake .3s ease-in-out infinite;
+    }
+
+    @keyframes timer-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+
+    @keyframes timer-shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-3px); }
+      75% { transform: translateX(3px); }
+    }
+
+    .poker-timer-bar-wrap {
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,.08);
+      border-radius: 99px;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+
+    .poker-timer-bar {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      border-radius: 99px;
+      transition: width .9s linear, background .3s;
+    }
+
+    .poker-timer.urgent .poker-timer-bar {
+      background: linear-gradient(90deg, #ffd166, #ff6b4a);
+    }
+
+    .poker-timer.critical .poker-timer-bar {
+      background: #ff3b3b;
+    }
+
+    .share-zone {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
   </style>
 </head>
 <body>
@@ -593,6 +668,7 @@
     <button type="button" class="app-nav-btn" data-app="poker">🃏 콜말콜</button>
   </nav>
 
+  <div id="shareZone" class="share-zone">
   <header id="appHeader">
     <div class="emoji-hero" id="headerEmoji">🏃‍♂️💨</div>
     <h1 id="headerTitle">지각 핑계 생성기</h1>
@@ -621,10 +697,10 @@
       <span class="placeholder">아래 버튼을 눌러 핑계를 생성하세요!</span>
     </div>
 
-    <div class="btn-group">
+    <div class="btn-group no-capture">
       <button type="button" class="btn btn-primary" id="generateBtn">✨ 핑계 생성하기</button>
       <button type="button" class="btn btn-secondary" id="copyBtn" style="display:none">📋 복사하기</button>
-      <button type="button" class="btn btn-share" id="shareBtn">💬 친구에게 공유하기</button>
+      <button type="button" class="btn btn-share" id="shareBtn">📸 캡처해서 공유하기</button>
     </div>
 
     <div class="stats">
@@ -680,21 +756,28 @@
     </div>
     <p class="hair-scan" id="hairScan"></p>
 
-    <div class="btn-group">
+    <div class="btn-group no-capture">
       <button type="button" class="btn btn-primary" id="hairCalcBtn">🔬 탈모 확률 분석하기</button>
       <button type="button" class="btn btn-secondary" id="hairCopyBtn" style="display:none">📋 결과 복사하기</button>
-      <button type="button" class="btn btn-share" id="hairShareBtn">💬 결과 공유하기</button>
+      <button type="button" class="btn btn-share" id="hairShareBtn">📸 캡처해서 공유하기</button>
     </div>
   </main>
 
   <main class="card panel" id="panelPoker">
     <div id="pokerQuiz">
+      <div class="poker-timer" id="pokerTimer">
+        <div class="poker-timer-display" id="pokerTimerNum">30</div>
+        <div class="poker-timer-bar-wrap">
+          <div class="poker-timer-bar" id="pokerTimerBar"></div>
+        </div>
+        <p class="poker-timer-label">⏱️ 당신의 턴 — 30초 안에 결정하세요!</p>
+      </div>
       <div class="quiz-progress">
         <span id="pokerStepLabel">질문 1 / 5</span>
         <div class="quiz-dots" id="pokerDots"></div>
       </div>
       <div class="quiz-question-box" id="pokerQuestion"></div>
-      <div class="yn-btns">
+      <div class="yn-btns no-capture">
         <button type="button" class="yn-btn yes" id="pokerYes">예 😰</button>
         <button type="button" class="yn-btn no" id="pokerNo">아니오 😎</button>
       </div>
@@ -706,9 +789,9 @@
         <p class="poker-reason" id="pokerReason"></p>
         <p class="poker-score" id="pokerScore"></p>
       </div>
-      <div class="btn-group">
+      <div class="btn-group no-capture">
         <button type="button" class="btn btn-secondary" id="pokerCopyBtn">📋 결과 복사하기</button>
-        <button type="button" class="btn btn-share" id="pokerShareBtn">💬 톡방에 공유하기</button>
+        <button type="button" class="btn btn-share" id="pokerShareBtn">📸 캡처해서 공유하기</button>
         <button type="button" class="btn btn-primary" id="pokerRetryBtn">🔄 다시 판단하기</button>
       </div>
     </div>
@@ -718,6 +801,7 @@
     <p id="footerLine1">※ 본 서비스는 핑계의 진실성을 보장하지 않습니다 😇</p>
     <p id="footerLine2">지각하지 않는 것이 최고의 핑계입니다</p>
   </footer>
+  </div>
 
   <div class="toast" id="toast"></div>
 
@@ -760,9 +844,11 @@
     };
 
     let currentApp = 'excuse';
+    let onAppSwitch = null;
 
     function switchApp(app) {
       if (!appMeta[app]) return;
+      const from = currentApp;
       currentApp = app;
       document.querySelectorAll('.app-nav-btn').forEach((btn) => {
         btn.classList.toggle('active', btn.dataset.app === app);
@@ -776,6 +862,7 @@
       document.getElementById('headerSubtitle').textContent = meta.subtitle;
       document.getElementById('footerLine1').textContent = meta.footer1;
       document.getElementById('footerLine2').textContent = meta.footer2;
+      if (onAppSwitch) onAppSwitch(from, app);
     }
 
     document.getElementById('appNav').addEventListener('click', (e) => {
@@ -1057,6 +1144,99 @@
       setTimeout(() => toast.classList.remove('show'), 2500);
     }
 
+    let sharing = false;
+    let html2canvasReady = null;
+
+    function loadHtml2Canvas() {
+      if (window.html2canvas) return Promise.resolve(window.html2canvas);
+      if (html2canvasReady) return html2canvasReady;
+      html2canvasReady = new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        s.onload = () => resolve(window.html2canvas);
+        s.onerror = () => reject(new Error('html2canvas load failed'));
+        document.head.appendChild(s);
+      });
+      return html2canvasReady;
+    }
+
+    function getShareUrl() {
+      if (location.protocol === 'file:') return '';
+      const base = location.origin + location.pathname;
+      return currentApp === 'excuse' ? base : base + '?app=' + currentApp;
+    }
+
+    function downloadBlob(blob, filename) {
+      const a = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      a.href = url;
+      a.download = filename;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    async function captureAndShare(title, fallbackText) {
+      if (sharing) return;
+      sharing = true;
+      showToast('📸 화면 캡처 중...');
+
+      try {
+        const html2canvas = await loadHtml2Canvas();
+        const zone = document.getElementById('shareZone');
+        const canvas = await html2canvas(zone, {
+          backgroundColor: '#0f0f14',
+          scale: Math.min(window.devicePixelRatio || 2, 3),
+          useCORS: true,
+          logging: false,
+          onclone: (doc, clone) => {
+            const z = clone.getElementById('shareZone');
+            if (z) {
+              z.style.padding = '24px 20px';
+              z.style.backgroundColor = '#0f0f14';
+              z.style.backgroundImage =
+                'radial-gradient(ellipse 120% 80% at 20% 0%, rgba(255,107,74,.18) 0%, transparent 55%),' +
+                'radial-gradient(ellipse 120% 80% at 80% 100%, rgba(255,209,102,.12) 0%, transparent 55%)';
+            }
+            clone.querySelectorAll('.no-capture').forEach((el) => {
+              el.style.display = 'none';
+            });
+          },
+        });
+
+        const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png', 0.92));
+        if (!blob) throw new Error('blob failed');
+
+        const file = new File([blob], 'mansejin-share.png', { type: 'image/png' });
+        const shareUrl = getShareUrl();
+        const shareText = shareUrl ? fallbackText + '\n' + shareUrl : fallbackText;
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({ title, files: [file] });
+            showToast('📤 공유 완료!');
+            sharing = false;
+            return;
+          } catch (e) {
+            if (e.name === 'AbortError') {
+              sharing = false;
+              return;
+            }
+          }
+        }
+
+        downloadBlob(blob, 'mansejin-share.png');
+        if (shareText) await copyToClipboard(shareText);
+        showToast('📥 이미지 저장됨! 갤러리에서 붙여넣기 하세요');
+      } catch {
+        const shareUrl = getShareUrl();
+        const shareText = shareUrl ? fallbackText + '\n' + shareUrl : fallbackText;
+        copyToClipboard(shareText).then((ok) => {
+          showToast(ok ? '📋 캡처 실패 — 텍스트 복사됨' : '📋 캡처 실패');
+        });
+      }
+      sharing = false;
+    }
+
     function copyExcuse() {
       const text = getCopyText();
       if (!text) return;
@@ -1067,24 +1247,9 @@
 
     function share() {
       const text = currentExcuse
-        ? `나 오늘 지각했는데 핑계 이거 쓸래 ㅋㅋ\n"${currentExcuse}"\n\n너도 핑계 필요하면 여기서 만들어 👇`
+        ? `나 오늘 지각했는데 핑계 이거 쓸래 ㅋㅋ\n"${currentExcuse}"`
         : '지각했을 때 쓸 핑계 만들어주는 사이트 발견 ㅋㅋ';
-      const url = location.protocol === 'file:' ? '' : location.href;
-      const shareText = url ? text + '\n' + url : text;
-
-      if (navigator.share) {
-        const shareData = url
-          ? { title: '지각 핑계 생성기 🏃‍♂️', text, url }
-          : { title: '지각 핑계 생성기 🏃‍♂️', text: shareText };
-        navigator.share(shareData).catch((e) => {
-          if (e.name !== 'AbortError') copyToClipboard(shareText).then(() => showToast('📋 복사됨! 카톡에 붙여넣기 하세요'));
-        });
-        return;
-      }
-
-      copyToClipboard(shareText).then((ok) => {
-        showToast(ok ? '📋 복사됨! 카톡에 붙여넣기 하세요' : shareText);
-      });
+      captureAndShare('지각 핑계 생성기 🏃‍♂️', text);
     }
 
     bindTap(document.getElementById('generateBtn'), generate);
@@ -1201,18 +1366,7 @@
       const text = hairResultText
         ? hairResultText
         : `${name}님 탈모 확률 측정해봤는데 ㅋㅋㅋ 너도 해봐`;
-      const url = location.protocol === 'file:' ? '' : location.origin + location.pathname + '?app=hair';
-      const shareText = url ? text + '\n' + url : text;
-
-      if (navigator.share) {
-        navigator.share({ title: '탈모 확률 계산기 🧑‍🦲', text: shareText }).catch((e) => {
-          if (e.name !== 'AbortError') copyToClipboard(shareText).then(() => showToast('📋 복사됨! 카톡에 붙여넣기 하세요'));
-        });
-        return;
-      }
-      copyToClipboard(shareText).then((ok) => {
-        showToast(ok ? '📋 복사됨! 카톡에 붙여넣기 하세요' : shareText);
-      });
+      captureAndShare('탈모 확률 계산기 🧑‍🦲', text);
     }
 
     bindTap(document.getElementById('hairCalcBtn'), calcHair);
@@ -1220,44 +1374,125 @@
     bindTap(document.getElementById('hairShareBtn'), shareHair);
 
     // ── 콜 할까 말까? ──
-    const pokerQuestions = [
-      '상대방이 오늘따라 의심스럽습니까?',
-      '레이즈 타이밍이 평소와 다릅니까?',
-      '보드 텍스처가 상대 핸드랑 잘 맞아 보입니까?',
-      '팟 사이즈 대비 베팅이 과하게 큽니까?',
-      '상대가 평소보다 말이 많거나 적습니까?',
+    const POKER_TIME = 30;
+    const POKER_Q_COUNT = 5;
+
+    const pokerQuestionPool = [
+      '지금 배고프십니까?',
+      '오늘 양말 색이 마음에 듭니까?',
+      '상대방 얼굴이 유명인 닮았습니까?',
+      '화장실 가고 싶은 느낌이 듭니까?',
+      '방금 카톡 알림 왔습니까?',
+      '오늘 점심 뭐 먹었는지 기억 안 납니까?',
+      '상대가 방금 하품한 것 같습니까?',
+      '지금 에어컨 바람이 너무 세지 않습니까?',
+      '오늘 운세 확인하고 오셨습니까?',
+      '팟 사이즈가 치킨 한 마리 값 이상 같습니까?',
+      '상대 프로필 사진이 오래된 것 같습니까?',
+      '지금 손에 땀이 납니까?',
+      '실내인데 비행기 소리가 들리는 것 같습니까?',
+      '오늘 커피 3잔 이상 마셨습니까?',
+      '상대 닉네임이 무섭습니까?',
+      '지금 고양이 영상이 보고 싶습니까?',
+      '책상(또는 방)이 지저분합니까?',
+      '상대가 이모티콘을 썼습니까?',
+      '오늘 세수하셨습니까?',
+      '누가 옆에서 쳐다보는 것 같습니까?',
+      '상대 프로필에 카드 문양이 있습니까?',
+      '콜하면 저녁 약속에 늦을 것 같습니까?',
+      '지금 머릿속에 노래가 맴돕니까?',
+      '오늘 머리 감았습니까?',
+      '상대가 존댓말을 씁니까?',
+      '지금 누워서 하고 있습니까?',
+      '방금 재채기 했습니까?',
+      '오늘 로또 사셨습니까?',
+      '상대방 이름이 어렵습니까?',
+      '지금 이 앱 쓰는 게 들킬 것 같습니까?',
     ];
 
     const callReasons = [
-      '상대가 블러핑일 확률 127%입니다 (수학적으로)',
-      '이 팟, 안 가져가면 평생 후회합니다',
-      '콜 한 번이면 인생이 바뀝니다 (아마)',
-      '상대도 떨고 있을 겁니다. 당당하게 가세요',
-      '오늘은 운이 당신 편입니다. probably',
-      '핸드레인지가 넓다면 콜이 정답입니다',
+      '직감이 "콜"이라고 합니다 (직감이 원숭이)',
+      '안 하면 평생 "그때 콜할걸" 할 겁니다',
+      '상대도 사실 떨고 있을 겁니다. probably',
+      '우주가 콜하라고 속삭이고 있습니다',
+      '핑계는 준비됐고, 용기만 있으면 됩니다',
+      '오늘 점심 맛있게 먹었으니 운이 좋습니다',
+      '양말 색이 오늘의 행운을 뒷받침합니다',
     ];
 
     const foldReasons = [
-      '상대 눈빛이 너무 편안합니다. 핸드 있음',
-      '이 보드에서 콜하면 지갑이 울 겁니다',
-      '폴드가 실력입니다. 오늘은 접으세요',
-      '상대가 웃고 있습니다. 그건 좋은 신호가 아닙니다',
-      '의심 포인트가 너무 많습니다. 다음 기회에',
-      '톡방에 "콜?" 올리기 전에 이미 답은 폴드입니다',
+      '배고프면 판단력이 떨어집니다. 일단 폴드',
+      '화장실 급하면 무조건 폴드입니다 (미국 프로도 인정)',
+      '이 앱까지 켰다는 건 이미 마음이 기울었다는 뜻',
+      '고양이 영상이 보고 싶을 때는 폴드가 정답',
+      '시간 초과 = 패닉 폴드. 논란의 여지가 없습니다',
+      '상대 닉네임이 무서우면 접는 게 상식입니다',
+      '누워서 치면 폴드가 물리적으로 맞습니다',
+    ];
+
+    const timeUpReasons = [
+      '생각할 시간도 없었습니다. 패닉 폴드!',
+      '딜러가 이미 카드를 태우려 합니다. 폴드!',
+      '30초 안에 못 정하면 그게 답입니다',
     ];
 
     let pokerStep = 0;
-    let pokerSuspicion = 0;
+    let pokerYesCount = 0;
     let pokerResultText = '';
+    let activePokerQuestions = [];
+    let pokerTimeLeft = POKER_TIME;
+    let pokerTimerId = null;
+    let pokerTimedOut = false;
 
     const pokerQuiz = document.getElementById('pokerQuiz');
     const pokerResult = document.getElementById('pokerResult');
     const pokerQuestion = document.getElementById('pokerQuestion');
     const pokerDots = document.getElementById('pokerDots');
     const pokerStepLabel = document.getElementById('pokerStepLabel');
+    const pokerTimerEl = document.getElementById('pokerTimer');
+    const pokerTimerNum = document.getElementById('pokerTimerNum');
+    const pokerTimerBar = document.getElementById('pokerTimerBar');
+
+    function pickPokerQuestions() {
+      const shuffled = pokerQuestionPool.slice().sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, POKER_Q_COUNT);
+    }
+
+    function updateTimerUI() {
+      pokerTimerNum.textContent = pokerTimeLeft;
+      pokerTimerBar.style.width = (pokerTimeLeft / POKER_TIME * 100) + '%';
+      pokerTimerEl.classList.toggle('urgent', pokerTimeLeft <= 10 && pokerTimeLeft > 5);
+      pokerTimerEl.classList.toggle('critical', pokerTimeLeft <= 5);
+    }
+
+    function stopPokerTimer() {
+      if (pokerTimerId) {
+        clearInterval(pokerTimerId);
+        pokerTimerId = null;
+      }
+    }
+
+    function startPokerTimer() {
+      stopPokerTimer();
+      pokerTimerId = setInterval(() => {
+        pokerTimeLeft--;
+        updateTimerUI();
+        if (pokerTimeLeft <= 0) {
+          stopPokerTimer();
+          onPokerTimeUp();
+        }
+      }, 1000);
+    }
+
+    function onPokerTimeUp() {
+      if (pokerResult.style.display !== 'none') return;
+      pokerTimedOut = true;
+      showToast('⏰ 시간 초과! 패닉 판정!');
+      showPokerVerdict();
+    }
 
     function renderPokerDots() {
-      pokerDots.innerHTML = pokerQuestions.map((_, i) => {
+      pokerDots.innerHTML = activePokerQuestions.map((_, i) => {
         let cls = 'quiz-dot';
         if (i < pokerStep) cls += ' done';
         else if (i === pokerStep) cls += ' current';
@@ -1268,15 +1503,16 @@
     function showPokerQuestion() {
       pokerQuiz.style.display = 'block';
       pokerResult.style.display = 'none';
-      pokerQuestion.textContent = pokerQuestions[pokerStep];
-      pokerStepLabel.textContent = `질문 ${pokerStep + 1} / ${pokerQuestions.length}`;
+      pokerQuestion.textContent = activePokerQuestions[pokerStep];
+      pokerStepLabel.textContent = `질문 ${pokerStep + 1} / ${POKER_Q_COUNT}`;
       renderPokerDots();
     }
 
-    function answerPoker(suspicious) {
-      if (suspicious) pokerSuspicion++;
+    function answerPoker(yes) {
+      if (pokerResult.style.display !== 'none') return;
+      if (yes) pokerYesCount++;
       pokerStep++;
-      if (pokerStep < pokerQuestions.length) {
+      if (pokerStep < activePokerQuestions.length) {
         showPokerQuestion();
         return;
       }
@@ -1284,10 +1520,21 @@
     }
 
     function showPokerVerdict() {
-      const fold = pokerSuspicion >= 3;
+      stopPokerTimer();
+
+      let fold;
+      let reason;
+
+      if (pokerTimedOut) {
+        fold = true;
+        reason = timeUpReasons[Math.floor(Math.random() * timeUpReasons.length)];
+      } else {
+        fold = pokerYesCount >= 3;
+        const reasons = fold ? foldReasons : callReasons;
+        reason = reasons[Math.floor(Math.random() * reasons.length)];
+      }
+
       const verdict = fold ? 'FOLD 🙅' : 'CALL ✅';
-      const reasons = fold ? foldReasons : callReasons;
-      const reason = reasons[Math.floor(Math.random() * reasons.length)];
       const verdictEl = document.getElementById('pokerVerdict');
       const cls = fold ? 'fold' : 'call';
 
@@ -1295,19 +1542,28 @@
       verdictEl.className = 'poker-verdict ' + cls;
       document.getElementById('pokerReason').textContent = reason;
       document.getElementById('pokerScore').textContent =
-        `의심 지수 ${pokerSuspicion} / ${pokerQuestions.length} · ${fold ? '폴드 권장' : '콜 권장'}`;
+        pokerTimedOut
+          ? `시간 초과 · 예 ${pokerYesCount}개 · 폴드 권장`
+          : `예 ${pokerYesCount}개 / ${POKER_Q_COUNT} · ${fold ? '폴드 권장' : '콜 권장'}`;
 
-      pokerResultText = `[콜 할까 말까?]\n결과: ${verdict}\n${reason}\n(의심 지수 ${pokerSuspicion}/${pokerQuestions.length})`;
+      pokerResultText = `[콜 할까 말까?]\n결과: ${verdict}\n${reason}\n(예 ${pokerYesCount}/${POKER_Q_COUNT})`;
 
       pokerQuiz.style.display = 'none';
       pokerResult.style.display = 'block';
     }
 
     function resetPoker() {
+      stopPokerTimer();
       pokerStep = 0;
-      pokerSuspicion = 0;
+      pokerYesCount = 0;
+      pokerTimedOut = false;
       pokerResultText = '';
+      pokerTimeLeft = POKER_TIME;
+      activePokerQuestions = pickPokerQuestions();
+      updateTimerUI();
+      pokerTimerEl.classList.remove('urgent', 'critical');
       showPokerQuestion();
+      if (currentApp === 'poker') startPokerTimer();
     }
 
     function copyPokerResult() {
@@ -1321,19 +1577,13 @@
 
     function sharePoker() {
       const text = pokerResultText || '홀덤 톡방용 콜/폴드 결정기 발견 ㅋㅋ';
-      const url = location.protocol === 'file:' ? '' : location.origin + location.pathname + '?app=poker';
-      const shareText = url ? text + '\n' + url : text;
-
-      if (navigator.share) {
-        navigator.share({ title: '콜 할까 말까? 🃏', text: shareText }).catch((e) => {
-          if (e.name !== 'AbortError') copyToClipboard(shareText).then(() => showToast('📋 복사됨! 톡방에 붙여넣기 하세요'));
-        });
-        return;
-      }
-      copyToClipboard(shareText).then((ok) => {
-        showToast(ok ? '📋 복사됨! 톡방에 붙여넣기 하세요' : shareText);
-      });
+      captureAndShare('콜 할까 말까? 🃏', text);
     }
+
+    onAppSwitch = (from, to) => {
+      if (from === 'poker') stopPokerTimer();
+      if (to === 'poker' && pokerResult.style.display === 'none') startPokerTimer();
+    };
 
     resetPoker();
     bindTap(document.getElementById('pokerYes'), () => answerPoker(true));
